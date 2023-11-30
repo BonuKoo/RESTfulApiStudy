@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -62,6 +63,36 @@ public class AdminUserController {
 
        MappingJacksonValue mapping = new MappingJacksonValue(adminUser);
        mapping.setFilters(filters);
+
+        return mapping;
+    }
+
+    @GetMapping("/users")
+    public MappingJacksonValue retrieveAllUsers4Admin() {
+
+        List<User> users = service.findAll();
+
+        List<AdminUser> adminUsers = new ArrayList<>();
+        AdminUser adminUser = null;
+
+        //유저 데이터에 포함되어 있는 형태를
+        //AdminUser로 바꿀 것
+        for (User user : users) {
+            adminUser = new AdminUser();
+            BeanUtils.copyProperties(user,adminUser);
+
+            //복사 작업이 잘 되었을 때, adminUsers에 값을 저장
+            adminUsers.add(adminUser);
+        }
+
+        SimpleBeanPropertyFilter filter
+                = SimpleBeanPropertyFilter.filterOutAllExcept("id","name","joinDate","ssn");
+
+
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(adminUsers);
+        mapping.setFilters(filters);
 
         return mapping;
     }
