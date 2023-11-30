@@ -17,9 +17,9 @@ public class UserDaoService {
 
     //초기 데이터 값 저장
     static{
-        users.add(new User(1,"Kenneth", new Date()));
-        users.add(new User(2,"Alice", new Date()));
-        users.add(new User(3,"Elena", new Date()));
+        users.add(new User(1,"Kenneth", new Date(),"test1","111111-122222"));
+        users.add(new User(2,"Alice", new Date(),"test2","111112-222222"));
+        users.add(new User(3,"Elena", new Date(),"test3","111113-322222"));
     }
 
     public List<User> findAll(){
