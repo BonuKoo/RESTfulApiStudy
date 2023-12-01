@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import jakarta.validation.Valid;
 import kr.co.consulting.MyRESTfulService.bean.AdminUser;
+import kr.co.consulting.MyRESTfulService.bean.AdminUserV2;
 import kr.co.consulting.MyRESTfulService.bean.User;
 import kr.co.consulting.MyRESTfulService.dao.UserDaoService;
 import kr.co.consulting.MyRESTfulService.exception.UserNotFoundException;
@@ -96,6 +97,67 @@ public class AdminUserController {
 
         return mapping;
     }
+
+
+//    @GetMapping("/v1/users/{id}")
+//    @GetMapping(value = "/users/{id}",params = "version=1")
+//    @GetMapping(value = "/users/{id}",headers = "X-API-VERSION=1")  //소문자->대문자 ctrl+shift+u
+@GetMapping(value = "/users/{id}",produces = "application/vnd.company.appv1+json")
+
+public MappingJacksonValue retrieveUserV14Admin(@PathVariable int id) {
+
+        User user = service.findOne(id);
+
+        AdminUser adminUser = new AdminUser();
+
+        if (user == null){
+            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+        } else {
+
+            BeanUtils.copyProperties(user,adminUser);
+        }
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","name","joinDate","ssn");
+
+
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(adminUser);
+        mapping.setFilters(filters);
+
+        return mapping;
+    }
+
+    //@GetMapping("/v2/users/{id}")
+    //@GetMapping(value = "/users/{id}",params = "version=2")
+    //@GetMapping(value = "/users/{id}",headers = "X-API-VERSION=2")
+    @GetMapping(value = "/users/{id}",produces = "application/vnd.company.appv2.json")
+
+    public MappingJacksonValue retrieveUserV24Admin(@PathVariable int id) {
+
+        User user = service.findOne(id);
+
+        AdminUserV2 adminUser = new AdminUserV2();
+
+        if (user == null){
+            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+        } else {
+
+            BeanUtils.copyProperties(user,adminUser);
+            adminUser.setGrade("VIP");  //기존 User에 Grade가 생김
+        }
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","name","joinDate","grade");
+
+                                                                    //AdminUserV2 필터링
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfoV2",filter);
+
+        MappingJacksonValue mapping = new MappingJacksonValue(adminUser);
+        mapping.setFilters(filters);
+
+        return mapping;
+    }
+
 
 
 }
