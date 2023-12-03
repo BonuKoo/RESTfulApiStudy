@@ -8,3 +8,20 @@ logging:
 spring:
   messages:
     basename: messages
+#  security:
+#    user:
+#      name: username
+#      password: passw0rd
+#    springboot 2.7 에서 springfox 를 위한 설정
+#    mvc:
+#      pathmatch:
+#        matching-stragegy: ant_path_matcher
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        #* 은 모든 것을 다 오픈한 상태 = 보안성 취약
+
